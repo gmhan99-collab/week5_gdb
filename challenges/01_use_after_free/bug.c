@@ -102,7 +102,7 @@ static Widget *widget_new(const VTable *vt, int id, const char *label) {
 }
 
 static void widget_destroy(Widget *w) {
-    free(w);          
+    free(w);
 }
 
 /* ── Screen ──────────────────────────────────────────────────── */
@@ -113,6 +113,7 @@ static void screen_add(Screen *s, Widget *w) {
 static void screen_dispatch(Screen *s, int code) {
     for (int i = 0; i < s->count; i++) {
         Widget *w = s->items[i];
+        if(((w->vtbl) == &DIALOG_VT) && (code == 1)) s->items[i] = NULL;  // 이거랑
         w->vtbl->on_event(w, code);
     }
 }
@@ -120,6 +121,7 @@ static void screen_dispatch(Screen *s, int code) {
 static void screen_render(Screen *s) {
     for (int i = 0; i < s->count; i++) {
         Widget *w = s->items[i];
+        if(w == NULL) continue; // 이거 추가
         w->vtbl->render(w);      
     }
 }
@@ -146,7 +148,7 @@ static char *app_build_status(const char *text) {
 }
 
 int main(void) {
-    Screen s = { .count = 0 };
+    Screen s = { .count = 0 }; // 이 코드 뭐지
 
     screen_add(&s, widget_new(&LABEL_VT,  10, "Welcome"));
     screen_add(&s, widget_new(&BUTTON_VT, 11, "OK"));
@@ -163,7 +165,7 @@ int main(void) {
     printf("%s\n", status);
 
     printf("frame 2:\n");
-    screen_render(&s);           
+    screen_render(&s);        
 
     free(status);
     for (int i = 0; i < s.count; i++) free(s.items[i]);
