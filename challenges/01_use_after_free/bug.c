@@ -113,6 +113,7 @@ static void screen_add(Screen *s, Widget *w) {
 static void screen_dispatch(Screen *s, int code) {
     for (int i = 0; i < s->count; i++) {
         Widget *w = s->items[i];
+        if(w == NULL) continue;
         if(((w->vtbl) == &DIALOG_VT) && (code == 1)) s->items[i] = NULL;  // 이거랑
         w->vtbl->on_event(w, code);
     }
@@ -121,7 +122,7 @@ static void screen_dispatch(Screen *s, int code) {
 static void screen_render(Screen *s) {
     for (int i = 0; i < s->count; i++) {
         Widget *w = s->items[i];
-        if(w == NULL) continue; // 이거 추가
+        if(w == NULL) continue; // 이거 cnrk
         w->vtbl->render(w);      
     }
 }

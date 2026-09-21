@@ -35,9 +35,6 @@
  *     fprintf(stderr, "free rec=%p (%s)\n", (void*)r, tag);
  *   → by_id 루프와 by_name 루프에서 동일 주소가 각각 나오면 이중 해제.
  *   (stdout 은 버퍼링되니 stderr 로 찍어야 크래시 직전 로그가 남는다)
- *
- * TODO: 소유권은 한 곳만 갖게 한다. 예) by_id 를 "소유 인덱스"로 정하고 여기서만 해제,
- *       by_name 은 "관찰용(빌려온) 인덱스"로 두어 절대 free 하지 않는다.
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -105,7 +102,9 @@ static void directory_free(Directory *d) {
         free(d->by_id[i]);                 
     }
     for (int i = 0; i < d->count; i++) {
-        free(d->by_name[i]);               
+        // free(d->by_name[i]);               // 여기 3줄 수정함.
+        d->by_name[i]->name = NULL;
+        d->by_name[i] = NULL;
     }
     d->count = 0;
 }
