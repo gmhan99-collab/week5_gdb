@@ -5,24 +5,27 @@
 
 #define MAX_LINES 8
 typedef struct {
-    char **lines;    
-    int    count;
+    char *lines[MAX_LINES];    
+    int count;
 } LineView;
 
 static void view_set(LineView *out, char **arr, int n) {
-    out->lines = arr;
+    *(out->lines) = *arr;
     out->count = n;
+    for(int i = 0; i < n; i++)
+    {
+        *((out->lines)+i) = *(arr + i);      
+    }
 }
 
 static void split_lines(LineView *out, char *text) {
-    char **parts = malloc(sizeof(char *) * MAX_LINES);
+    char *parts[MAX_LINES];              
     int n = 0;
     
     for (char *ln = strtok(text, "\n"); ln && n < MAX_LINES; ln = strtok(NULL, "\n"))
         parts[n++] = ln;
 
     view_set(out, parts, n);      
-
 }
 
 static void warm_stack(void) {
@@ -42,8 +45,7 @@ int main(void) {
     long checksum = 0;
     for (int i = 0; i < v.count; i++)
         checksum += (unsigned char)v.lines[i][0];
-
+    
     printf("lines = %d, checksum = %ld\n", v.count, checksum);
-    free(v.lines);
     return 0;
 }
