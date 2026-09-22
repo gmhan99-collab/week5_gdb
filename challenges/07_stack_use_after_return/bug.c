@@ -15,7 +15,10 @@ static void view_set(LineView *out, char **arr, int n) {
 }
 
 static void split_lines(LineView *out, char *text) {
-    char **parts = malloc(sizeof(char *) * MAX_LINES);
+    char **parts = malloc(sizeof(*parts) * MAX_LINES);
+
+    if (parts == NULL) return 0;
+
     int n = 0;
     
     for (char *ln = strtok(text, "\n"); ln && n < MAX_LINES; ln = strtok(NULL, "\n"))
